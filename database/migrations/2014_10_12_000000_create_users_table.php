@@ -22,6 +22,8 @@ class CreateUsersTable extends Migration
             $table->string('zip_code');    
             $table->string('password');         
             $table->integer('status')->default(0);
+            $table->string('ip_address')->nullable(); 
+            $table->string('last_login')->nullable();
             $table->timestamps();
         });
     }

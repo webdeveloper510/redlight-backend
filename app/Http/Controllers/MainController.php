@@ -9,11 +9,13 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\VerifyMail;
 use Mail;
+use Carbon\Carbon;
 
 class MainController extends Controller
 {    
         public function register(Request $request){
-         
+        //  echo "<pre>";
+        //  print_r($request->all());die;
                 $request->validate([
                 'role_id'=>'required',
                 'first_name'=>'required',
@@ -40,12 +42,18 @@ class MainController extends Controller
 
         }
 
-    
+
 
         public function login(Request $request){
+            $id = $request->id;        
+            $ip_address = $request->ip();
+            $last_login = Carbon::now();
+            $user = User::where('id', $id)->update(['ip_address'=> $ip_address, 'last_login'=>$last_login]);
+
             if(Auth::attempt($request->only('email', 'password'))){ 
                 return response()->json([
-                    'status' => 'Logged In'
+                    'status' => 'Logged In',
+                    'ip_address' => $ip_address
                 ]); 
             }
             return response()->json([
@@ -75,9 +83,8 @@ class MainController extends Controller
        public function updateUserStatus(Request $request){
             $id = $request->id;
             $status = $request->status;
-
-
             $user = User::where('id', $id)->update(['status'=> $status]);
+
             if($user){                
                 return response()->json([
                     'message'=> 'User approved successfully!'
@@ -90,31 +97,12 @@ class MainController extends Controller
             }
         } 
 
-        public function createReviewer(Request $request){
-                $request->validate([
-                'reviewer_id'=>'required',
-                'email'=>'required|email',
-                'zip_code'=>'required'
-            ]);
-
-            $reviewer = Reviewer::create([
-                'reviewer_id'=>$request->reviewer_id,
-                'email'=>$request->email,
-                'zip_code'=>$request->zip_code               
-            ]);    
-            return response()->json([
-                'status' => 'Reviewer has been created successfully!',
-                'data'  => $reviewer        
-            ]); 
-            
-        }
-
         public function createProvider(Request $request){
-            echo "<pre>";
-            print_r($request->all());die;
+            // echo "<pre>";
+            // print_r($request->all());die;
             
                 $request->validate([
-                    'email'=>'required|email',
+                    'email'=>'required|email|unique:providers',
                     'sms'=>'required',
                     'zip_code'=>'required',
                     'city'=>'required',
@@ -128,7 +116,20 @@ class MainController extends Controller
                     'profile_id'=>'required',
                     'gallery'=>'required',
                     'advertisement_url'=>'required'
-                ]);
+                ]);               
+
+            //    $image= array();
+            //    if($files = $request->gallery){
+            //         foreach($files as $file){
+            //             $image_name = md5(rand(1000, 10000));
+            //             $ext = strtolower($file->getClientOriginalExtension());
+            //             $image_full_name = $image_name.'.'.$ext;
+            //             $upload_path = 'public/image/';
+            //             $image_url = $upload_path.$image_full_name;
+            //             $file->move($upload_path,$image_full_name);
+            //             $image[] = $image_url;                        
+            //         }                
+            //    }
 
                 $provider = Provider::create([
                     'email'=>$request->email,
@@ -143,8 +144,9 @@ class MainController extends Controller
                     'dress_size'=>$request->dress_size,
                     'profile_claimed'=>$request->profile_claimed,
                     'profile_id'=>$request->profile_id,
-                    'gallery'=>$request->gallery,
-                    'advertisement_url'=>$request->advertisement_url
+                    // 'gallery'=> json_encode($image),
+                    'gallery'=> json_encode($request->gallery),
+                    'advertisement_url'=>json_encode($request->advertisement_url)
                 ]);  
                 return response()->json([
                     'status' => 'Provider has been created successfully!',
