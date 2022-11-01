@@ -20,9 +20,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/register', [MainController::class, 'register']);
-Route::post('/login', [MainController::class, 'login'])->name('login');
+Route::post('/login', [MainController::class, 'login']);
 Route::get('get-users', [MainController::class, 'allUsers']);
 Route::post('/update-user-status', [MainController::class, 'updateUserStatus']);
+Route::post('/create-provider', [FileController::class, 'createProvider']);
 
 
 
