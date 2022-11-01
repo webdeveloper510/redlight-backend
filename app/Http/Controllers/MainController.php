@@ -97,12 +97,10 @@ class MainController extends Controller
             }
         } 
 
-        public function createProvider(Request $request){
-            // echo "<pre>";
-            // print_r($request->all());die;
+        public function createProvider(Request $request){    
             
                 $request->validate([
-                    'email'=>'required|email|unique:providers',
+                    'email'=>'required|email',
                     'sms'=>'required',
                     'zip_code'=>'required',
                     'city'=>'required',
@@ -114,22 +112,37 @@ class MainController extends Controller
                     'dress_size'=>'required',
                     'profile_claimed'=>'required',
                     'profile_id'=>'required',
-                    'gallery'=>'required',
-                    'advertisement_url'=>'required'
+               
                 ]);               
-
-            //    $image= array();
-            //    if($files = $request->gallery){
-            //         foreach($files as $file){
-            //             $image_name = md5(rand(1000, 10000));
-            //             $ext = strtolower($file->getClientOriginalExtension());
-            //             $image_full_name = $image_name.'.'.$ext;
-            //             $upload_path = 'public/image/';
-            //             $image_url = $upload_path.$image_full_name;
-            //             $file->move($upload_path,$image_full_name);
-            //             $image[] = $image_url;                        
-            //         }                
-            //    }
+                // echo "<pre>";
+                // print_r($request->all());die;          
+               if($files = $request->image1){                    
+                $image_name = md5(rand(1000, 10000));
+                $ext = strtolower($file->getClientOriginalExtension());
+                $image_full_name = $image_name.'.'.$ext;
+                $upload_path = 'public/image/';
+                $image_url1 = $upload_path.$image_full_name;
+                $file->move($upload_path,$image_full_name);                   
+                                    
+               }
+               if($files = $request->image2){                     
+                $image_name = md5(rand(1000, 10000));
+                $ext = strtolower($file->getClientOriginalExtension());
+                $image_full_name = $image_name.'.'.$ext;
+                $upload_path = 'public/image/';
+                $image_url2 = $upload_path.$image_full_name;
+                $file->move($upload_path,$image_full_name);                   
+                                
+               }
+                if($files = $request->image3){                   
+                    $image_name = md5(rand(1000, 10000));
+                    $ext = strtolower($file->getClientOriginalExtension());
+                    $image_full_name = $image_name.'.'.$ext;
+                    $upload_path = 'public/image/';
+                    $image_url3 = $upload_path.$image_full_name;
+                    $file->move($upload_path,$image_full_name);                   
+                                
+               }
 
                 $provider = Provider::create([
                     'email'=>$request->email,
@@ -144,9 +157,13 @@ class MainController extends Controller
                     'dress_size'=>$request->dress_size,
                     'profile_claimed'=>$request->profile_claimed,
                     'profile_id'=>$request->profile_id,
-                    // 'gallery'=> json_encode($image),
-                    'gallery'=> json_encode($request->gallery),
-                    'advertisement_url'=>json_encode($request->advertisement_url)
+                    'image1'=>$request->image1,
+                    'image2'=>$request->image2,
+                    'image3'=>$request->image3,
+                    'advertisement_url1'=>$request->advertisement_url1,
+                    'advertisement_url2'=>$request->advertisement_url2,
+                    'advertisement_url3'=>$request->advertisement_url3,
+
                 ]);  
                 return response()->json([
                     'status' => 'Provider has been created successfully!',

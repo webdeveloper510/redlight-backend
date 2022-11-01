@@ -26,9 +26,13 @@ class CreateProvidersTable extends Migration
             $table->string('cup_size');
             $table->string('dress_size');
             $table->string('profile_claimed');
-            $table->string('profile_id');
-            $table->string('gallery');
-            $table->string('advertisement_url');
+            $table->string('profile_id');           
+            $table->string('advertisement_url1');
+            $table->string('advertisement_url2');
+            $table->string('advertisement_url3');
+            $table->string('image1');
+            $table->string('image2');
+            $table->string('image3');
             $table->timestamps();
         });
     }
